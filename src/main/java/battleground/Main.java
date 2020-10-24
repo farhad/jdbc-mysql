@@ -23,6 +23,10 @@ public class Main {
         insertCustomer(connection, customer);
 
         displayAllCustomers(connection);
+
+        deleteCustomer(connection, customer);
+
+        displayAllCustomers(connection);
     }
 
     private static void displayAllCustomers(Connection connection) {
@@ -67,6 +71,27 @@ public class Main {
 
         } catch (SQLException exception) {
             System.out.println("Inserting customer throwed an exception: ");
+            System.out.println(exception.getLocalizedMessage());
+        }
+    }
+
+    private static void deleteCustomer(Connection connection, Customer customer) {
+        System.out.println();
+        System.out.println("------------- deleting a customer -------------");
+        System.out.println();
+
+        try {
+            Statement statement = connection.createStatement();
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("DELETE FROM customers WHERE first_name=");
+            queryBuilder.append("'").append(customer.getFirstName()).append("'");
+
+            int rowsAffected = statement.executeUpdate(queryBuilder.toString());
+
+            System.out.println(" rows affected: " + rowsAffected);
+
+        } catch (SQLException exception) {
+            System.out.println("deleting customer throwed an exception: ");
             System.out.println(exception.getLocalizedMessage());
         }
     }
