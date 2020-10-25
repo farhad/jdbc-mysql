@@ -11,8 +11,12 @@ public class StoredProceduresDemo {
 
         Connection connection = DriverManager.getConnection(url, userName, password);
 
-        CallableStatement callableStatement = connection.prepareCall("{call displayAllCustomers()}");
-        displayAllCustomers(callableStatement.executeQuery());
+        CallableStatement spDisplayAllCustomers = connection.prepareCall("{call displayAllCustomers()}");
+        displayAllCustomers(spDisplayAllCustomers.executeQuery());
+
+        CallableStatement spIncreasePointsBy = connection.prepareCall("{call increasePointsBy(?)}");
+        spIncreasePointsBy.setDouble("increaseAmount", 100.5);
+        spIncreasePointsBy.execute();
 
     }
 
