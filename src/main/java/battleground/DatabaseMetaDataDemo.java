@@ -24,5 +24,19 @@ public class DatabaseMetaDataDemo {
             System.out.println(resultSet.getString(1));
         }
 
+        CallableStatement spDisplayAllCustomers = connection.prepareCall("{call displayAllCustomers()}");
+        ResultSet customersRs = spDisplayAllCustomers.executeQuery();
+        ResultSetMetaData resultSetMetaData = customersRs.getMetaData();
+
+        /**
+         * with jdbc almost all indices are 1-based instead of 0-based
+         */
+        for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
+            System.out.println("column name -> " + resultSetMetaData.getColumnName(i));
+            System.out.println("column type -> " + resultSetMetaData.getColumnTypeName(i));
+            System.out.println("column isNullable -> " + resultSetMetaData.isNullable(i));
+            System.out.println("column is AutoIncrement -> " + resultSetMetaData.isAutoIncrement(i));
+        }
+
     }
 }
