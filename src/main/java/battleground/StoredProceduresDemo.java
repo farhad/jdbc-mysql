@@ -18,6 +18,15 @@ public class StoredProceduresDemo {
         spIncreasePointsBy.setDouble("increaseAmount", 100.5);
         spIncreasePointsBy.execute();
 
+        CallableStatement spGreetCustomer = connection.prepareCall("{call greetCustomer(?)}");
+        String customerName = "Farhad";
+        spGreetCustomer.registerOutParameter(1, Types.VARCHAR);
+        spGreetCustomer.setString("customerName", customerName);
+        spGreetCustomer.execute();
+        customerName = spGreetCustomer.getString(1);
+        System.out.println(customerName);
+
+
     }
 
     private static void displayAllCustomers(ResultSet resultSet) {
