@@ -12,11 +12,28 @@ public class BlobClobDemo {
         Connection connection = DriverManager.getConnection(url, userName, password);
 
         /**
+         * using BLOB column demo
+         */
+        blob(connection);
+
+        /**
+         * using CLOB column demo
+         */
+        clob(connection);
+
+    }
+
+    private static void blob(Connection connection) throws IOException, SQLException {
+
+        /**
          * reading the file as InputStream from classLoader didn't work. todo: why?
          */
         File file = new File("src/main/resources/resume.pdf");
         FileInputStream fileInputStream = new FileInputStream(file);
 
+        /**
+         * updating blob column in db
+         */
         String query = "UPDATE customers SET resume=? WHERE first_name='Elka'";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setBinaryStream(1, fileInputStream);
@@ -40,8 +57,41 @@ public class BlobClobDemo {
             while (inputStream.read(buffer) > 0) {
                 fileOutputStream.write(buffer);
             }
-
         }
+    }
+
+    private static void clob(Connection connection) throws SQLException, IOException {
+        String clobQuery = "UPDATE customers SET bio=? WHERE first_name='Elka'";
+        PreparedStatement statement = connection.prepareStatement(clobQuery);
+
+        /**
+         * Updating clob column in db
+         */
+        File file = new File("src/main/resources/sample.txt");
+        FileReader fileReader = new FileReader(file);
+        statement.setCharacterStream(1, fileReader);
+
+        System.out.println("rowAffected -> " + statement.executeUpdate());
+
+        /**
+         * reading clob column in db
+         */
+        File file1 = new File("src/main/resources/bio-from-db.txt");
+        FileWriter fileWriter = new FileWriter(file1);
+
+        Statement selectResume = connection.createStatement();
+        ResultSet resultSet = selectResume.executeQuery("SELECT bio FROM customers where first_name='Elka'");
+
+        while (resultSet.next()) {
+            Reader reader = resultSet.getCharacterStream("bio");
+
+            int theChar;
+            while ((theChar = reader.read()) > 0) {
+                fileWriter.write(theChar);
+            }
+        }
+
+        fileWriter.flush();
 
     }
 }
