@@ -11,13 +11,22 @@ public class StoredProceduresDemo {
 
         Connection connection = DriverManager.getConnection(url, userName, password);
 
+        /**
+         * sp returning a resultSet
+         */
         CallableStatement spDisplayAllCustomers = connection.prepareCall("{call displayAllCustomers()}");
         displayAllCustomers(spDisplayAllCustomers.executeQuery());
 
+        /**
+         * using IN parameter
+         */
         CallableStatement spIncreasePointsBy = connection.prepareCall("{call increasePointsBy(?)}");
         spIncreasePointsBy.setDouble("increaseAmount", 100.5);
         spIncreasePointsBy.execute();
 
+        /**
+         * using INOUT parameter
+         */
         CallableStatement spGreetCustomer = connection.prepareCall("{call greetCustomer(?)}");
         String customerName = "Farhad";
         spGreetCustomer.registerOutParameter(1, Types.VARCHAR);
@@ -26,6 +35,15 @@ public class StoredProceduresDemo {
         customerName = spGreetCustomer.getString(1);
         System.out.println(customerName);
 
+
+        /**
+         * using OUT parameter
+         */
+        CallableStatement spCountCustomerInCity = connection.prepareCall("{call countCustomerInCity(?,?)}");
+        spCountCustomerInCity.registerOutParameter(2, Types.INTEGER);
+        spCountCustomerInCity.setString("cityQuery", "Calgary");
+        spCountCustomerInCity.execute();
+        System.out.println("number of customers in Calgary-> " + spCountCustomerInCity.getInt(2));
 
     }
 
