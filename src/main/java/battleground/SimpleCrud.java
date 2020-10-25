@@ -2,7 +2,7 @@ package battleground;
 
 import java.sql.*;
 
-public class Main {
+public class SimpleCrud {
 
     public static void main(String[] args) throws SQLException {
 
